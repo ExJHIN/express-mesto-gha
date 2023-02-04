@@ -18,24 +18,36 @@ const createCard = (req, res) => {
     });
 };
 
+// const deleteCard = (req, res) => {
+//   const { cardId } = req.params;
+//   Card.findByIdAndRemove(cardId).then((card) => {
+//     res.status(200).send(card);
+//   }).catch((err) => {
+//     if (err.name === 'CastError') {
+//       res.status(404).send({ message: 'Карточка не найдена.' });
+//     }
+//     if (err.name === 'ValidationError') {
+//       res.status(400).send({ message: 'Переданы некорректные данные для удаления карточки.' });
+//     } else {
+//       res.status(500).send({ message: `Произошла ошибка ${err.name} ${err.message}` });
+//     }
+//   });
+// };
 const deleteCard = (req, res) => {
-  const { cardId } = req.params;
-  Card.findByIdAndRemove(cardId).then((card) => {
-    if (!card) {
-      res.status(404).send({ message: 'Карточка не найдена.' });
-      return;
-    }
-    res.status(200).send(card);
-  }).catch((err) => {
-    if (err.name === 'CastError') {
-      res.status(404).send({ message: 'Карточка не найдена.' });
-    }
-    if (err.name === 'ValidationError') {
-      res.status(400).send({ message: 'Переданы некорректные данные.' });
-    } else {
-      res.status(500).send({ message: `Произошла ошибка ${err.name} ${err.message}` });
-    }
-  });
+  Card.findById(req.params.cardId)
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Карточка не найдена.' });
+      } else {
+        card.remove().then(() => res.send(card));
+      }
+    }).catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные для удаления карточки.' });
+      } else {
+        res.status(500).send({ message: `Произошла ошибка ${err.name} ${err.message}` });
+      }
+    });
 };
 
 const readCards = (req, res) => {
