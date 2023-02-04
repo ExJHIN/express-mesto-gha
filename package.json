@@ -2,7 +2,7 @@
   "name": "express-mesto-gha",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://github.com/ExJHIN/express-mesto-gha",
+  "homepage": "https://github.com/dashimiko/express-mesto-gha#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.1",
@@ -25,7 +25,7 @@
     "eslint-plugin-import": "^2.26.0",
     "nodemon": "^2.0.20"
   },
-  "description": "[![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)\r ",
+  "description": "[![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)\r # Проект Mesto фронтенд + бэкенд ",
   "main": "app.js",
   "repository": {
     "type": "git",
