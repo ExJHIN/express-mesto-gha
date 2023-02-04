@@ -2,10 +2,15 @@ const User = require('../models/user');
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
-  res.send({ some: 'json' });
   User.create({ name, about, avatar }).then((user) => {
     res.status(201).send(user);
-  }).catch((err) => res.status(500).send({ message: err.message }));
+  }).catch((err) => {
+    if (err.name === 'ValidationError') {
+      res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+    } else {
+      res.status(500).send({ message: `Произошла ошибка ${err.name} ${err.message}` });
+    }
+  });
 };
 
 const readUsers = (req, res) => {
@@ -15,9 +20,15 @@ const readUsers = (req, res) => {
 };
 
 const readUsersById = (req, res) => {
-  User.findById(req.user._id)
-    .then((user) => res.send(user))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+  User.findOne({ _id: req.params.userId }).then((user) => {
+    res.status(200).send(user);
+  }).catch((err) => {
+    if (err.name === 'CastError') {
+      res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
+    } else {
+      res.status(500).send({ message: `Произошла ошибка ${err.name} ${err.message}` });
+    }
+  });
 };
 
 const updateUser = (req, res) => {
@@ -33,7 +44,7 @@ const updateUser = (req, res) => {
     } res.status(201).send(user);
   }).catch((err) => {
     if (err.name === 'ValidationError') {
-      res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
+      res.status(200).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
     } else {
       res.status(500).send({ message: `Произошла ошибка ${err.name} ${err.message}` });
     }

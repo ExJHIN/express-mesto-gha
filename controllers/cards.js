@@ -2,15 +2,18 @@ const Card = require('../models/card');
 
 const {
   OK,
-  CREATED,
 } = require('../constants');
 
 const createCard = (req, res) => {
   const { name, link } = req.body;
-  console.log(req.user._id);
+
   Card.create({ name, link, owner: req.user._id })
-    .then((newCard) => res.status(CREATED).send(newCard))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .then((newCard) => res.status(201).send(newCard))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(404).send({ message: 'Переданы некорректные данные при создании карточки.' });
+      }
+    });
 };
 
 const deleteCard = (req, res) => {
@@ -30,7 +33,13 @@ const readCards = (req, res) => {
     .then((card) => {
       res.status(OK).send(card);
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' });
+      } else {
+        res.status(500).send({ message: `Произошла ошибка ${err.name} ${err.message}` });
+      }
+    });
 };
 
 const likeCard = (req, res) => {

@@ -17,5 +17,4 @@ card.get('/', readCards);
 card.put('/:cardId/likes', likeCard);
 card.delete('/:cardId/likes', dislikeCard);
 
-// Экспортируем "роутер"
 module.exports = card;

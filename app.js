@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
 const users = require('./routes/users');
+const cards = require('./routes/cards');
 
 const { PORT = 3000 } = process.env;
 
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/users', users);
+app.use('/cards', cards);
 
 app.listen(PORT, () => {
   console.log('Сервер запущен');
