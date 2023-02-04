@@ -20,15 +20,14 @@ app.use((req, res, next) => {
 
   next();
 });
-app.use((req, res, next) => {
-  console.log(req.method, req.path);
-  next();
-});
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/users', users);
 app.use('/cards', cards);
+app.get('*', (res) => {
+  res.status(404);
+});
 
 app.listen(PORT, () => {
   console.log('Сервер запущен');
