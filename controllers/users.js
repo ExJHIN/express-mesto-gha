@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 const User = require('../models/user');
 
 const createUser = (req, res) => {
@@ -31,24 +32,44 @@ const readUsersById = (req, res) => {
   });
 };
 
-const updateUser = (req, res) => {
+// const updateUser = (req, res) => {
+//   const { name, about } = req.body;
+//   User.findByIdAndUpdate(
+//     req.user._id,
+//     { name, about },
+//     { new: true, runValidators: true },
+//   ).then((user) => {
+//     if (!user) {
+//       res.status(404).send({ message: 'Пользователь с указанным _id не найден.' });
+//       return;
+//     } res.status(200).send(user);
+//   }).catch((err) => {
+//     if (err.name === 'ValidationError') {
+//       res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
+//     } else {
+//       res.status(500).send({ message: `Произошла ошибка ${err.name} ${err.message}` });
+//     }
+//   });
+// };
+
+const updateUser = (req, res, next) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(
-    req.user._id,
-    { name, about },
-    { new: true, runValidators: true },
-  ).then((user) => {
-    if (!user) {
-      res.status(404).send({ message: 'Пользователь с указанным _id не найден.' });
-      return;
-    } res.status(200).send(user);
-  }).catch((err) => {
-    if (err.name === 'ValidationError') {
-      res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
-    } else {
-      res.status(500).send({ message: `Произошла ошибка ${err.name} ${err.message}` });
-    }
-  });
+
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+    .orFail(() => {
+      res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
+    })
+    .then((updateUser) => res.status(200).send(updateUser))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+      }
+      if (err.name === 'NotFound') {
+        res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
+      }
+
+      return next(err);
+    });
 };
 
 const updateAvatar = (req, res) => {
