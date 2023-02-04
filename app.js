@@ -25,10 +25,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/users', users);
 app.use('/cards', cards);
-app.get('*', (res) => {
+app.use((req, res) => {
   res.status(404).send({ message: 'Страница не найдена' });
 });
-
 app.listen(PORT, () => {
   console.log('Сервер запущен');
 });

@@ -23,7 +23,7 @@ const deleteCard = (req, res) => {
   Card.findByIdAndRemove(cardId).then((card) => {
     res.status(200).send(card);
   }).catch((err) => {
-    if (err.name === 'NotFound') {
+    if (err.name === 'CastError') {
       res.status(404).send({ message: 'Карточка не найдена.' });
     }
     if (err.name === 'ValidationError') {
