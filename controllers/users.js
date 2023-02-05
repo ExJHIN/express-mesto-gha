@@ -31,7 +31,9 @@ const readUsersById = (req, res) => {
     .then((user) => {
       res.status(200).send(user);
     }).catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'NotFound') {
+        res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
+      } else if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные.' });
       } else {
         res.status(500).send({ message: `Произошла ошибка ${err.name} ${err.message}` });
