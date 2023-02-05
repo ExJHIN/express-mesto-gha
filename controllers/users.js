@@ -25,13 +25,12 @@ const readUsers = (req, res) => {
 
 const readUsersById = (req, res) => {
   User.findOne({ _id: req.params.userId })
-    .orFail(() => {
-      res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
-    })
+    .orFail()
     .then((user) => {
       res.status(200).send(user);
-    }).catch((err) => {
-      if (err.name === 'NotFound') {
+    })
+    .catch((err) => {
+      if (err.name === 'DocumentNotFoundError') {
         res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
       } else if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные.' });
