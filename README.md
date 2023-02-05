@@ -17,4 +17,4 @@
 
 ##Ссылка на проект
 
-[a link](https://github.com/ExJHIN/express-mesto-gha)
+[Ссылка на сайт в GITHUB PAGES](https://github.com/ExJHIN/express-mesto-gha)
