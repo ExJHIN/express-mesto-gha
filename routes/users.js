@@ -5,18 +5,15 @@ const {
   readUsers,
   updateUser,
   updateAvatar,
-  createUser,
   readUsersById,
+  gettingUserInfo,
 } = require('../controllers/users');
 
 users.get('/', readUsers);
-
+users.get('/me', gettingUserInfo);
 users.get('/:userId', readUsersById);
 
-users.post('/', createUser);
-
 users.patch('/me', updateUser);
-
 users.patch('/me/avatar', updateAvatar);
 
 module.exports = users;
