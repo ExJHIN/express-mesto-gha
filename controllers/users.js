@@ -5,10 +5,12 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {
   OK,
+  CREATED,
 } = require('../constants');
 const NotFoundError = require('../errors/notFoundError');
 const BadRequestError = require('../errors/badRequestError');
 const ConflictError = require('../errors/conflictError');
+const AuthorizationError = require('../errors/authorizationError');
 const { JWT_SECRET } = require('../middlewares/auth');
 // Создаем пользователя
 const createUser = (req, res, next) => {
@@ -25,7 +27,7 @@ const createUser = (req, res, next) => {
     avatar,
     email,
     password: hashpassword,
-  })).then((user) => res.status(OK).send({
+  })).then((user) => res.status(CREATED).send({
     _id: user._id,
     name,
     about,
@@ -48,19 +50,17 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      bcrypt.compare(password, user.password);
-      const token = jwt.sign({ _id: user.id }, JWT_SECRET, { expiresIn: '7d' });
-      return res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true }).send({
-        message: 'Успешно добавлено',
-        JWT: token,
-      });
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        return next(new BadRequestError('Переданы некорректные данные при входе.'));
+      if (!user) {
+        throw new NotFoundError('Пользователь по указанному _id не найден.');
+      } else {
+        const token = jwt.sign({ _id: user.id }, JWT_SECRET, { expiresIn: '7d' });
+        res.send({ token });
       }
-      next(err);
-    });
+    })
+    .catch(() => {
+      throw new AuthorizationError('Необходима авторизация');
+    })
+    .catch(next);
 };
 
 // Все пользователи
