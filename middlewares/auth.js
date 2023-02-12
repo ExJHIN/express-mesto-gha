@@ -13,7 +13,6 @@ const auth = (req, res, next) => {
       throw next(new AuthorizationError(NOT_FOUND_USER));
     }
   }
-
   const token = !authorization ? JWT : authorization.replace('Bearer ', '');
   let payload = '';
   try {
