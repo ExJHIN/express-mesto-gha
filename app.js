@@ -52,10 +52,8 @@ app.post('/signup', celebrate({
   }).unknown(true),
 }), createUser);
 
-app.use(auth);
-
-app.use('/users', users);
-app.use('/cards', cards);
+app.use('/users', auth, users);
+app.use('/cards', auth, cards);
 
 app.use(errors());
 
