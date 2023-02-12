@@ -107,7 +107,7 @@ const gettingUserInfo = (req, res, next) => {
         _id: user._id,
         email: user.email,
       };
-      res.send(userData);
+      res.status(200).send(userData);
     })
     .catch((err) => {
       if (err.name === 'NotFound') {

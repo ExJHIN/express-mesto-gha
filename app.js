@@ -37,27 +37,16 @@ app.post('/signin', celebrate({
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
-    name: Joi.string()
-      .min(2)
-      .max(30)
-      .default('Жак-Ив Кусто'),
-    about: Joi.string()
-      .min(2)
-      .max(30)
-      .default('Исследователь'),
-    avatar: Joi.string()
-      .min(2)
-      .max(30)
-      .default('https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png')
-      .pattern(RegExp),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().pattern(RegExp),
     email: Joi.string().required().email(),
-    password: Joi.string().min(8).required(),
-  }).unknown(true),
+    password: Joi.string().required().min(8),
+  }),
 }), createUser);
 
-app.use(auth);
-app.use('/users', users);
-app.use('/cards', cards);
+app.use('/users', auth, users);
+app.use('/cards', auth, cards);
 
 app.use(errors());
 
