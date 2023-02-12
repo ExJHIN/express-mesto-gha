@@ -99,7 +99,16 @@ const gettingUserInfo = (req, res, next) => {
     .orFail(() => {
       throw next(new NotFoundError('Пользователь по указанному _id не найден.'));
     })
-    .then((user) => res.status(OK).send(user))
+    .then((user) => {
+      const userData = {
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        _id: user._id,
+        email: user.email,
+      };
+      res.send(userData);
+    })
     .catch((err) => {
       if (err.name === 'NotFound') {
         return next(new NotFoundError('Пользователь по указанному _id не найден.'));
