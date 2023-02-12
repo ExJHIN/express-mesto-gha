@@ -36,16 +36,13 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string()
       .min(2)
-      .max(30)
-      .default('Жак-Ив Кусто'),
+      .max(30),
     about: Joi.string()
       .min(2)
-      .max(30)
-      .default('Исследователь'),
+      .max(30),
     avatar: Joi.string()
       .min(2)
       .max(30)
-      .default('https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png')
       .pattern(RegExp),
     email: Joi.string().required().email(),
     password: Joi.string().min(8).required(),
