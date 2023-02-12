@@ -19,24 +19,11 @@ card.post('/', celebrate({
   }),
 }), createCard);
 
-card.delete('/:cardId', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().required().pattern(RegExp),
-  }),
-}), deleteCard);
+card.delete('/:cardId', deleteCard);
 
-card.put('/:cardId/likes', celebrate({
-  params: Joi.object().keys({
-    cardId: Joi.string().length(24).hex(),
-  }),
-}), likeCard);
+card.put('/:cardId/likes', likeCard);
 
-card.delete('/:cardId/likes', celebrate({
-  params: Joi.object().keys({
-    cardId: Joi.string().length(24).hex(),
-  }),
-}), dislikeCard);
+card.delete('/:cardId/likes', dislikeCard);
 
 card.use(errors());
 
