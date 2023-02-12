@@ -3,8 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 
-const RegExp = /https?:\/\/\w+\b#?/;
-
+const RegExp = /https?:\/\/(www\.)?[-a-z0-9-._~:/?#@!$&'()*+,;=]+/;
 const bodyParser = require('body-parser');
 const { Joi, celebrate, errors } = require('celebrate');
 const { auth } = require('./middlewares/auth');
@@ -14,6 +13,7 @@ const {
   login,
   createUser,
 } = require('./controllers/users');
+const NotFoundError = require('./errors/notFoundError');
 
 const { PORT = 3000 } = process.env;
 
@@ -31,7 +31,6 @@ app.use(cookieParser());
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
   }),
 }), login);
 
@@ -41,7 +40,6 @@ app.post('/signup', celebrate({
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().pattern(RegExp),
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
   }),
 }), createUser);
 
@@ -50,8 +48,8 @@ app.use('/cards', auth, cards);
 
 app.use(errors());
 
-app.use((req, res) => {
-  res.status(404).send({ message: 'Страница не найдена' });
+app.use(auth, (req, res, next) => {
+  next(new NotFoundError('Страница по указанному маршруту не найдена'));
 });
 
 app.use((err, req, res, next) => {
