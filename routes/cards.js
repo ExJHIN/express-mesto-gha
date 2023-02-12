@@ -8,11 +8,11 @@ const {
   dislikeCard,
 } = require('../controllers/cards');
 
+card.get('/', readCards);
+
 card.post('/', createCard);
 
 card.delete('/:cardId', deleteCard);
-
-card.get('/', readCards);
 
 card.put('/:cardId/likes', likeCard);
 card.delete('/:cardId/likes', dislikeCard);

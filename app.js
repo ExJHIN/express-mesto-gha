@@ -1,8 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
-const { userAuthorization } = require('./middlewares/auth');
+const { auth } = require('./middlewares/auth');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
 const {
@@ -19,14 +20,12 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(express.json());
-
+app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/signin', login);
 app.post('/signup', createUser);
-
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.use('/users', userAuthorization, users);
-app.use('/cards', userAuthorization, cards);
+app.use(auth);
+app.use('/users', users);
+app.use('/cards', cards);
 app.use((req, res) => {
   res.status(404).send({ message: 'Страница не найдена' });
 });

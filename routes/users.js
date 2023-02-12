@@ -1,4 +1,3 @@
-// const RegExp = /https?:\W+/;
 const users = require('express').Router();
 
 const {
