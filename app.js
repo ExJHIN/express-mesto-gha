@@ -3,7 +3,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 
-const RegExp = /https?:\/\/(www\.)?[-a-z0-9-._~:/?#@!$&'()*+,;=]+/;
 const bodyParser = require('body-parser');
 const { Joi, celebrate, errors } = require('celebrate');
 const { auth } = require('./middlewares/auth');
@@ -39,7 +38,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(RegExp),
+    avatar: Joi.string(),
     email: Joi.string().required().email(),
   }),
 }), createUser);
