@@ -1,5 +1,5 @@
-/* eslint-disable consistent-return */
 /* eslint-disable no-shadow */
+/* eslint-disable consistent-return */
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -50,17 +50,12 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь по указанному _id не найден.');
-      } else {
-        const token = jwt.sign({ _id: user.id }, JWT_SECRET, { expiresIn: '7d' });
-        res.send({ token });
-      }
+      const token = jwt.sign({ _id: user.id }, JWT_SECRET, { expiresIn: '7d' });
+      res.send({ token });
     })
     .catch(() => {
-      throw new AuthorizationError('Необходима авторизация');
-    })
-    .catch(next);
+      next(new AuthorizationError('Необходима авторизация'));
+    });
 };
 
 // Все пользователи

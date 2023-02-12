@@ -7,7 +7,6 @@ const {
 const NotFoundError = require('../errors/notFoundError');
 const BadRequestError = require('../errors/badRequestError');
 const ForbiddenError = require('../errors/Forbidden');
-const AuthorizationError = require('../errors/authorizationError');
 
 // Создание карточки
 const createCard = (req, res, next) => {
@@ -44,11 +43,11 @@ const deleteCard = (req, res, next) => {
         .then(() => res.status(OK).send({ message: 'Карточка удалена' }))
         .catch((err) => {
           if (err.name === 'CastError') {
-            return next(new AuthorizationError('Переданы некорректные данные при удаление карточки.'));
+            return next(new BadRequestError('Переданы некорректные данные при удаление карточки.'));
           }
           return next(err);
         });
-    });
+    }).catch(next);
 };
 
 // Получить все карточки
