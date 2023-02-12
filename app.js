@@ -14,6 +14,7 @@ const {
   createUser,
 } = require('./controllers/users');
 const NotFoundError = require('./errors/notFoundError');
+const SERVER_ERROR = require('./errors/ServerError');
 
 const { PORT = 3000 } = process.env;
 
@@ -59,7 +60,17 @@ app.use((err, req, res, next) => {
   });
   next();
 });
+app.use((err, req, res, next) => {
+  const { statusCode = SERVER_ERROR, message } = err;
 
+  res.status(statusCode).send({
+    message: statusCode === SERVER_ERROR
+      ? 'Произошла неизвестная ошибка, проверьте корректность запроса'
+      : message,
+  });
+
+  return next();
+});
 app.listen(PORT, () => {
   console.log('Сервер запущен');
 });
