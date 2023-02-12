@@ -33,15 +33,15 @@ const createUser = (req, res, next) => {
   }))
     .catch((err) => {
       if (err.code === 11000) {
-        return next(new ConflictError('email занят'));
+        next(new ConflictError('email занят'));
       }
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        return next(new BadRequestError('Переданы некорректные данные при обновлении профиля. Заполните поля, в них должно быть от 2 до 30 символов'));
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля. Заполните поля, в них должно быть от 2 до 30 символов'));
       }
       if (err.name === 'Bad Request') {
-        return next(new BadRequestError('Переданы некорректные данные при обновлении профиля. Заполните поля, в них должно быть от 2 до 30 символов'));
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля. Заполните поля, в них должно быть от 2 до 30 символов'));
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -84,11 +84,9 @@ const readUsersById = (req, res) => {
 const gettingUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => {
-      const error = new Error('Пользователь по указанному _id не найден.');
-      error.name = 'NotFound';
-      throw error;
+      throw next(new NotFoundError('Пользователь по указанному _id не найден.'));
     })
-    .then((user) => res.send(user))
+    .then((user) => res.status(OK).send(user))
     .catch((err) => {
       if (err.name === 'NotFound') {
         return next(new NotFoundError('Пользователь по указанному _id не найден.'));
@@ -98,7 +96,7 @@ const gettingUserInfo = (req, res, next) => {
         return next(new BadRequestError('Переданы некорректные данные при поиске пользователя.'));
       }
 
-      return next;
+      return next(err);
     });
 };
 
