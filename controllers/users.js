@@ -2,7 +2,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-
+const {
+  OK,
+} = require('../constants');
 const NotFoundError = require('../errors/notFoundError');
 const BadRequestError = require('../errors/badRequestError');
 const ConflictError = require('../errors/conflictError');
@@ -22,21 +24,25 @@ const createUser = (req, res, next) => {
     avatar,
     email,
     password: hashpassword,
-  })).then((user) => res.send({
+  })).then((user) => res.status(OK).send({
     _id: user._id,
-    name: user.name,
-    about: user.about,
-    avatar: user.avatar,
-    email: user.email,
-  })).catch((err) => {
-    if (err.code === 11000) {
-      next(new ConflictError('email занят'));
-    } else if (err.name === 'ValidationError' || err.name === 'CastError') {
-      next(new BadRequestError('Переданы некорректные данные при обновлении профиля. Заполните поля, в них должно быть от 2 до 30 символов'));
-    } else {
-      next(err);
-    }
-  });
+    name,
+    about,
+    avatar,
+    email,
+  }))
+    .catch((err) => {
+      if (err.code === 11000) {
+        return next(new ConflictError('email занят'));
+      }
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        return next(new BadRequestError('Переданы некорректные данные при обновлении профиля. Заполните поля, в них должно быть от 2 до 30 символов'));
+      }
+      if (err.name === 'Bad Request') {
+        return next(new BadRequestError('Переданы некорректные данные при обновлении профиля. Заполните поля, в них должно быть от 2 до 30 символов'));
+      }
+      return next(err);
+    });
 };
 
 // Контроллер login
