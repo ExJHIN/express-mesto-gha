@@ -1,7 +1,7 @@
 const users = require('express').Router();
 const { Joi, celebrate, errors } = require('celebrate');
 
-const RegExp = /https?:\W+/;
+const RegExp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/;
 
 const {
   readUsers,

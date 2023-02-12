@@ -15,6 +15,8 @@ const {
 const NotFoundError = require('./errors/notFoundError');
 const SERVER_ERROR = require('./errors/ServerError');
 
+const RegExp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/;
+
 const { PORT = 3000 } = process.env;
 
 const app = express();
@@ -31,6 +33,7 @@ app.use(cookieParser());
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
+    password: Joi.string().required(),
   }),
 }), login);
 
@@ -38,8 +41,9 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().pattern(RegExp),
     email: Joi.string().required().email(),
+    password: Joi.string().required(),
   }),
 }), createUser);
 
@@ -52,13 +56,6 @@ app.use(auth, (req, res, next) => {
   next(new NotFoundError('Страница по указанному маршруту не найдена'));
 });
 
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res.status(statusCode).send({
-    message: statusCode === 500 ? 'что-то пошло не так' : message,
-  });
-  next();
-});
 app.use((err, req, res, next) => {
   const { statusCode = SERVER_ERROR, message } = err;
 

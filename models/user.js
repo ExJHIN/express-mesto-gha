@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const isURL = require('validator/lib/isURL');
+const isEmail = require('validator/lib/isEmail');
 const AuthorizationError = require('../errors/authorizationError');
 const { NOT_FOUND_USER } = require('../constants');
 
@@ -34,10 +35,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true,
+    validate: {
+      validator: (v) => isEmail(v),
+      message: 'Неправильный формат почты',
+    },
   },
   password: {
     type: String,
     select: false,
+    required: true,
   },
 });
 

@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const Card = require('../models/card');
 
 const {
@@ -45,11 +46,6 @@ const deleteCard = (req, res, next) => {
           if (err.name === 'CastError') {
             return next(new AuthorizationError('Переданы некорректные данные при удаление карточки.'));
           }
-
-          if (err.name === 'NotFound') {
-            return next(new NotFoundError('Передан несуществующий _id карточки.'));
-          }
-
           return next(err);
         });
     });
@@ -81,13 +77,9 @@ const likeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Переданы некорректные данные для постановки лайка.'));
       }
-
-      if (err.name === 'NotFound') {
-        return next(new NotFoundError('Карточка с указанным _id не найдена.'));
-      }
-
-      return next(err);
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
 // Удалить лайк
@@ -100,10 +92,6 @@ const dislikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Переданы некорректные данные для удаления лайка.'));
-      }
-
-      if (err.name === 'NotFound') {
-        return next(new NotFoundError('Карточка с указанным _id не найдена.'));
       }
 
       return next(err);
