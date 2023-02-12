@@ -54,6 +54,7 @@ userSchema.statics.findUserByCredentials = function (email, password, next) {
       if (!user) {
         throw new AuthorizationError(NOT_FOUND_USER);
       }
+
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
