@@ -52,7 +52,11 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'very secret', { expiresIn: '7d' });
       res.send({ token });
-    }).catch(next);
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    })
+    .catch(next);
 };
 
 // Все пользователи
