@@ -15,15 +15,17 @@ const {
 const NotFoundError = require('./errors/notFoundError');
 const SERVER_ERROR = require('./errors/ServerError');
 
-const RegExp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/;
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000 } = process.env;
+const RegExp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/;
 
 const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
 });
+
+app.use(requestLogger);
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -50,11 +52,13 @@ app.post('/signup', celebrate({
 app.use('/users', auth, users);
 app.use('/cards', auth, cards);
 
-app.use(errors());
-
 app.use(auth, (req, res, next) => {
   next(new NotFoundError('Страница по указанному маршруту не найдена'));
 });
+
+app.use(errorLogger);
+
+app.use(errors());
 
 app.use((err, req, res, next) => {
   const { statusCode = SERVER_ERROR, message } = err;
@@ -67,6 +71,5 @@ app.use((err, req, res, next) => {
 
   return next();
 });
-app.listen(PORT, () => {
-  console.log('Сервер запущен');
-});
+
+module.exports = app;
