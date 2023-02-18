@@ -55,6 +55,13 @@ app.use((req, res, next) => {
   return next();
 });
 
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    console.log('Сервер сейчас упадёт');
+    throw new SERVER_ERROR('Сервер сейчас упадёт');
+  }, 0);
+});
+
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),

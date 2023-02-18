@@ -6,6 +6,8 @@ const CONFLICT_EMAIL = 'Пользователь с такой почтой уж
 const allowedCors = [
   'https://social-network.mesto.nomoredomains.work/',
   'http://social-network.mesto.nomoredomains.work/',
+  'http://localhost:3000',
+  'http://localhost:3001',
 ];
 module.exports = {
   OK,
