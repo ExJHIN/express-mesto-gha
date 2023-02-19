@@ -49,14 +49,13 @@ const createUser = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
-    .orFail(() => {
-      throw new AuthorizationError('Необходима авторизация');
-    })
     .then((user) => {
       const token = jwt.sign({ _id: user.id }, JWT_SECRET, { expiresIn: '7d' });
       res.send({ token });
     })
-    .catch(next);
+    .catch(() => {
+      next(new AuthorizationError('Необходима авторизация'));
+    });
 };
 
 // Все пользователи
@@ -86,7 +85,7 @@ const readUsersById = (req, res, next) => {
 const gettingUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => {
-      throw new NotFoundError('Пользователь по указанному _id не найден.');
+      throw next(new NotFoundError('Пользователь по указанному _id не найден.'));
     })
     .then((user) => {
       const userData = {
@@ -113,7 +112,7 @@ const updateUser = (req, res, next) => {
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(() => {
-      throw new NotFoundError('Пользователь по указанному _id не найден.');
+      throw next(new NotFoundError('Пользователь по указанному _id не найден.'));
     })
     .then((updateUser) => res.status(OK).send(updateUser))
     .catch((err) => {
@@ -130,7 +129,7 @@ const updateAvatar = (req, res, next) => {
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(() => {
-      throw new NotFoundError('Пользователь с указанным _id не найден.');
+      throw next(new NotFoundError('Пользователь с указанным _id не найден.'));
     })
     .then((newAvatar) => res.status(OK).send(newAvatar))
     .catch((err) => {
