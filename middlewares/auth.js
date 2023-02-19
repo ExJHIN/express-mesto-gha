@@ -15,7 +15,7 @@ const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    throw next(new AuthorizationError(NOT_FOUND_USER));
+    return next(new AuthorizationError(NOT_FOUND_USER));
   }
 
   const token = extractBearerToken(authorization);
@@ -24,7 +24,7 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    throw next(new AuthorizationError(NOT_FOUND_USER));
+    return next(new AuthorizationError(NOT_FOUND_USER));
   }
 
   req.user = payload;
